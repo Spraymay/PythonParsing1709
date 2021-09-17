@@ -1,36 +1,32 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+import json
 
 titleLinks = []
 titleSpan = []
-page=1
-max_page=3
-
-# html = urlopen('https://habr.com/ru/all/page'+ str(page)+'/')
-
-for i in range(page, max_page):
-    html = urlopen('https://habr.com/ru/all/page'+str(page)+'/')
+keys = [ 
+    'Windows',
+    'OS',
+    'MacOS',
+    'Linux',
+    'ОС',
+    'Операционная'
+]
+Mass = []
+for i in range(1,2):
+    html = urlopen('https://habr.com/ru/all/page'+str(i)+'/')
     bs = BeautifulSoup(html, "html.parser")
+    authors = bs.find_all('a', { 'class' : 'tm-user-info__username'})
+    # theme_keys = bs.find_all()
     for link in bs.findAll('a', {'class': 'tm-article-snippet__title-link'}, href=True):
-        titleLinks.append('https://habr.com' + link['href'])
-        titleSpan.append(link.get_text())
-        print(link.get_text() + ' link = ' + 'https://habr.com' + link['href']);
-
-
-
-# for item in Mass:
-    # if item.a['href'] == True:
-    #     titleLinks.append(item.a['href'])
-    # else:
-    #     titleLinks.append("no")
-    # titleLinks.append('https://habr.com' + item.a['href'])
-    # titleH2.append(item.get_text())
-    # print(item.get_text())
-# print(titleLinks)
-# print(titleH2)
-
-    # try:
-    #     if "Windows" in new_str or "OS" in new_str or "MacOS"in new_str or "Linux" in new_str or "ОС" in new_str :    
-    #         print(new_str)
-    # except:
-    #     pass
+        try:
+            if keys[0] in link.get_text() or keys[1] in link.get_text() or keys[2] in link.get_text() or keys[3] in link.get_text() or keys[4] in link.get_text() :
+                Mass.append({
+                    'author' : authors[i].get_text(),
+                    'title': link.get_text(),
+                    'link' : 'https://habr.com'+link['href']
+                })
+        except:
+            pass
+with open("example.json", "w", encoding='utf-8') as f: #, separators=(',', ': '), 
+    json.dump(json.dumps(Mass, indent=2, ensure_ascii=False), f, ensure_ascii=False)
