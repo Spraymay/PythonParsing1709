@@ -32,4 +32,4 @@ for part in parts:
     if (max <= i):
         break
 
-print(nltk.FreqDist(data).most_common(5))
+print("самые популярные слова: ", nltk.FreqDist(data).most_common(5))
